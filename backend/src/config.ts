@@ -42,23 +42,19 @@ export class Environment implements IEnvironment {
 
 export const envConfig = 'envConfig';
 
-export const envData = registerAs(envConfig, (): Environment => {
-  const environment = plainToClass(Environment, process.env, {
-    exposeDefaultValues: true,
+export const registerConfig = registerAs(envConfig, (): Environment => {
+  const envClass = plainToClass(Environment, process.env, {
     enableImplicitConversion: true,
     excludeExtraneousValues: true,
+    exposeDefaultValues: true,
     exposeUnsetFields: true,
   });
-  const error = validateSync(environment, {
+
+  const errors = validateSync(envClass, {
     skipMissingProperties: false,
   });
-  console.log(error);
-  if (error.length > 0) {
-    // throw error in red color
-    throw new Error(
-      '\x1b[31mSomething went wrong with the environment variables!\x1b[0m',
-    );
-  }
 
-  return environment;
+  if (errors.length > 0) throw new Error(errors.toString());
+
+  return envClass;
 });
