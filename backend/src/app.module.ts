@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { env } from './config';
+import { envData } from './config';
 
-console.log(env);
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [env]
+      load: [envData],
+      envFilePath: ['.env', '.env.development'],
     }),
   ],
   controllers: [AppController],
