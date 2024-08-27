@@ -1,7 +1,7 @@
 import { IsInt, IsNotEmpty, Max, Min, validateSync } from 'class-validator';
-import { IEnvironment } from './common/interfaces/environment';
 import { Expose, plainToClass } from 'class-transformer';
 import { registerAs } from '@nestjs/config';
+import { IEnvironment } from './common/interfaces';
 
 export class Environment implements IEnvironment {
   @IsNotEmpty()
