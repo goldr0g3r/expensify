@@ -1,3 +1,2 @@
-import { IUser } from './IUser';
-
-export { IUser };
+export * from './base';
+export * from './request';
