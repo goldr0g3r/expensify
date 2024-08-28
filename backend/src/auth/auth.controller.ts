@@ -5,18 +5,20 @@ import {
   RegisterAccountRequest,
 } from 'src/common/models/entity';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RefreshTokenGuard } from 'src/common/guards/refreshToken.guard';
+import { AuthParentRoute, AuthRoutes } from './auth.routes';
 
-@Controller('auth')
+@Controller(AuthParentRoute)
+@ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  @Post('register')
+  @Post(AuthRoutes.register)
   registerAccount(@Body() request: RegisterAccountRequest) {
     return this.authService.register(request);
   }
 
-  @Post('login')
+  @Post(AuthRoutes.login)
   loginAccount(@Body() request: LoginAccountRequest) {
     return this.authService.login(request);
   }

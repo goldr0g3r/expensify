@@ -25,8 +25,6 @@ export class RefreshTokenStrategy extends PassportStrategy(
   }
 
   async validate(req: Request, payload) {
-    console.log('payload', payload);
-
     const refreshToken = req.headers.authorization.split(
       ' ',
     )[1] as RefreshTokenType;
