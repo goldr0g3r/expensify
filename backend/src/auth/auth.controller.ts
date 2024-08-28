@@ -6,6 +6,7 @@ import {
 } from 'src/common/models/entity';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { RefreshTokenGuard } from 'src/common/guards/refreshToken.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -25,5 +26,14 @@ export class AuthController {
   @Get('is_auth')
   isAuth(@Req() req: Request) {
     return { message: 'Hi, User is authenticated' };
+  }
+
+  @UseGuards(RefreshTokenGuard)
+  @ApiBearerAuth('refreshToken')
+  @Get('refresh')
+  refresh(@Req() req: Request) {
+    return {
+      message: 'Hi, User is authenticated - refreshToken',
+    };
   }
 }

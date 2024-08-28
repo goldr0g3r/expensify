@@ -38,6 +38,8 @@ export class AuthService {
   }
 
   private async generateToken(userId, username, email) {
+    // generate random token
+    const randomToken = Math.random().toString(36).substring(2);
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
@@ -58,6 +60,7 @@ export class AuthService {
           sub: userId,
           username,
           email,
+          randomToken,
         },
         {
           secret:
