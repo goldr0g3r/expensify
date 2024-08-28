@@ -1,3 +1,3 @@
 import { IRegisterRequest } from './IRegisterRequest';
-
-export { IRegisterRequest };
+import { ILoginRequest } from './ILoginRequest';
+export { IRegisterRequest, ILoginRequest };
