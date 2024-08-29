@@ -29,18 +29,15 @@ export class CategoryRepository extends MongoRepository {
     const allCategories = await this.categoryModel.find();
     let categories = [];
     allCategories.forEach((category) => {
-      console.log(category.userId === userId);
       if (category.userId === userId) {
         categories.push(category);
       }
     });
-    console.log(categories);
     if (!categories) {
       return null;
     }
     return Promise.all(
       categories.map((category) => {
-        console.log(category);
         return this.toCategoryModel(category);
       }),
     );

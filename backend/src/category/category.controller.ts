@@ -19,8 +19,6 @@ import { CreateCategoryRequest } from 'src/common/models/entity/category';
 import { CategoryParentRoute, CategoryRoutes } from './category.routes';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 import { UUID } from 'crypto';
-import { ListCategoryOfUser } from './dto/listCategory';
-import { useContainer } from 'class-validator';
 
 @ApiTags('category')
 @Controller(CategoryParentRoute)
@@ -41,7 +39,6 @@ export class CategoryController {
   })
   @Get(`${CategoryRoutes.FindAll}:userId`)
   findAll(@Param('userId') userId: UUID) {
-    console.log('userId', userId);
     return this.categoryService.findAll(userId);
   }
 
