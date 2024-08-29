@@ -28,6 +28,18 @@ import { CategoryModule } from './category/category.module';
         },
       }),
     }),
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      connectionName: DB_CONNECTION.category,
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<Environment>(envConfig).mongoURI,
+        dbName: configService.get<Environment>(envConfig).categoryDB,
+        retryWrites: true,
+        writeConcern: {
+          w: 'majority',
+        },
+      }),
+    }),
     UserModule,
     AuthModule,
     CategoryModule,

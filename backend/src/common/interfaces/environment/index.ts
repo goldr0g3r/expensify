@@ -5,6 +5,7 @@ export interface IEnvironment {
 
   // database names for an expense tracer
   userDB: string;
+  categoryDB: string;
 
   // secret for jwt
   accessTokenSecret: string;

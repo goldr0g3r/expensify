@@ -27,7 +27,10 @@ export class AuthController {
   @ApiBearerAuth('accessToken')
   @Get('is_auth')
   isAuth(@Req() req: Request) {
-    return { message: 'Hi, User is authenticated' };
+    // get user from request object
+    return {
+      message: 'Hi, User is authenticated - accessToken',
+    };
   }
 
   @UseGuards(RefreshTokenGuard)

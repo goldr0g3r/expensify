@@ -38,6 +38,10 @@ export class Environment implements IEnvironment {
   @IsNotEmpty()
   @Expose({ name: 'REFRESH_TOKEN_SECRET' })
   refreshTokenSecret: string;
+
+  @IsNotEmpty()
+  @Expose({ name: 'CATEGORY_DB' })
+  categoryDB: string;
 }
 
 export const envConfig = 'envConfig';

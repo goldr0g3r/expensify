@@ -1,26 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { ICategoryCreateRequest } from 'src/common/interfaces/category';
+import { CategoryRepository } from './category.repository';
+import { UUID } from 'crypto';
 
 @Injectable()
 export class CategoryService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+  constructor(private categoryRepository: CategoryRepository) {}
+  create(request: ICategoryCreateRequest) {
+    return this.categoryRepository.create(request);
   }
 
-  findAll() {
-    return `This action returns all category`;
+  findAll(userId: UUID) {
+    return this.categoryRepository.findAll(userId);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  findOne(id: UUID, userId: UUID) {
+    return this.categoryRepository.findOne(id, userId);
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  update(userId: UUID, categoryId: UUID) {
+    return this.categoryRepository.update(userId, categoryId);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  delete(userId: UUID, categoryId: UUID) {
+    return this.categoryRepository.delete(userId, categoryId);
+  }
+
+  listall() {
+    return this.categoryRepository.listall();
   }
 }

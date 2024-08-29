@@ -1,34 +1,61 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CreateCategoryRequest } from 'src/common/models/entity/category';
+import { CategoryParentRoute, CategoryRoutes } from './category.routes';
+import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
+import { UUID } from 'crypto';
+import { ListCategoryOfUser } from './dto/listCategory';
 
-@Controller('category')
+@ApiTags('category')
+@Controller(CategoryParentRoute)
+@UseGuards(AccessTokenGuard)
+@ApiBearerAuth('accessToken')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+  @ApiOperation({ summary: 'Create a new category' })
+  @Post(CategoryRoutes.Create)
+  create(@Body() request: CreateCategoryRequest) {
+    return this.categoryService.create(request);
   }
 
-  @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  @ApiOperation({ summary: 'Find all categories' })
+  @Post(CategoryRoutes.FindAll)
+  findAll(@Body() request: ListCategoryOfUser) {
+    return this.categoryService.findAll(request.userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(+id);
+  @Get(CategoryRoutes.ListAll)
+  @ApiOperation({ summary: '(for admin) List all categories' })
+  listall() {
+    return this.categoryService.listall();
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryService.update(+id, updateCategoryDto);
+  @ApiOperation({ summary: 'Find a category by id' })
+  @Get(CategoryRoutes.FindById)
+  findOne(@Body() id: UUID, userId: UUID) {
+    return this.categoryService.findOne(id, userId);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(+id);
+  @ApiOperation({ summary: 'Update a category' })
+  @Patch(CategoryRoutes.Update)
+  update(@Param('id') id: UUID, userId: UUID) {
+    return this.categoryService.update(userId, id);
+  }
+
+  @ApiOperation({ summary: 'Delete a category' })
+  @Delete(CategoryRoutes.Delete)
+  delete(@Param('id') id: UUID, userId: UUID) {
+    return this.categoryService.delete(userId, id);
   }
 }
