@@ -27,14 +27,20 @@ export class CategoryRepository extends MongoRepository {
   async findAll(userId: UUID): Promise<CategoryResponse[] | null> {
     // filter by userId
     const allCategories = await this.categoryModel.find();
-    const categories = allCategories.filter((category) => {
-      return category.userId === userId;
+    let categories = [];
+    allCategories.forEach((category) => {
+      console.log(category.userId === userId);
+      if (category.userId === userId) {
+        categories.push(category);
+      }
     });
+    console.log(categories);
     if (!categories) {
       return null;
     }
     return Promise.all(
       categories.map((category) => {
+        console.log(category);
         return this.toCategoryModel(category);
       }),
     );

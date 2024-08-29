@@ -9,12 +9,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateCategoryRequest } from 'src/common/models/entity/category';
 import { CategoryParentRoute, CategoryRoutes } from './category.routes';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 import { UUID } from 'crypto';
 import { ListCategoryOfUser } from './dto/listCategory';
+import { useContainer } from 'class-validator';
 
 @ApiTags('category')
 @Controller(CategoryParentRoute)
@@ -30,9 +36,13 @@ export class CategoryController {
   }
 
   @ApiOperation({ summary: 'Find all categories OF the logged in user' })
-  @Post(CategoryRoutes.FindAll)
-  findAll(@Body() request: ListCategoryOfUser) {
-    return this.categoryService.findAll(request.userId);
+  @ApiParam({
+    name: 'userId',
+  })
+  @Get(`${CategoryRoutes.FindAll}:userId`)
+  findAll(@Param('userId') userId: UUID) {
+    console.log('userId', userId);
+    return this.categoryService.findAll(userId);
   }
 
   @Get(CategoryRoutes.ListAll)
