@@ -35,7 +35,6 @@ export class CategoryRepository extends MongoRepository {
     }
     return Promise.all(
       categories.map((category) => {
-        console.log(category);
         return this.toCategoryModel(category);
       }),
     );
@@ -75,7 +74,6 @@ export class CategoryRepository extends MongoRepository {
     if (!categories) {
       return null;
     }
-    console.log(categories);
     return Promise.all(
       categories.map((category) => this.toCategoryModel(category)),
     );

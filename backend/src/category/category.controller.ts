@@ -29,7 +29,7 @@ export class CategoryController {
     return this.categoryService.create(request);
   }
 
-  @ApiOperation({ summary: 'Find all categories' })
+  @ApiOperation({ summary: 'Find all categories OF the logged in user' })
   @Post(CategoryRoutes.FindAll)
   findAll(@Body() request: ListCategoryOfUser) {
     return this.categoryService.findAll(request.userId);
