@@ -13,15 +13,20 @@ import { TransactionRepository } from './transaction.repository';
   imports: [
     MongooseModule.forFeature(
       [
-        {
-          name: 'income',
-          schema: TransactionSchemaObject,
-          collection: 'income',
-        },
+        // {
+        //   name: 'income',
+        //   schema: TransactionSchemaObject,
+        //   collection: 'income',
+        // },
+        // {
+        //   name: TransactionSchema.name,
+        //   schema: TransactionSchemaObject,
+        //   collection: 'expense',
+        // },
         {
           name: TransactionSchema.name,
           schema: TransactionSchemaObject,
-          collection: 'expense',
+          collection: 'transaction',
         },
       ],
       DB_CONNECTION.transaction,

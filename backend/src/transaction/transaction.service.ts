@@ -6,7 +6,7 @@ import { ITransactionCreateRequest } from 'src/common/interfaces/transaction';
 export class TransactionService {
   constructor(private readonly transactionRepository: TransactionRepository) {}
 
-  async createIncome(request: ITransactionCreateRequest) {
-    return this.transactionRepository.createIncome(request);
+  async createTransaction(request: ITransactionCreateRequest) {
+    return this.transactionRepository.createTransaction(request);
   }
 }
