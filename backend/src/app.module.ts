@@ -8,6 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { DB_CONNECTION } from './common/constant/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -40,9 +41,22 @@ import { CategoryModule } from './category/category.module';
         },
       }),
     }),
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      connectionName: DB_CONNECTION.transaction,
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<Environment>(envConfig).mongoURI,
+        dbName: configService.get<Environment>(envConfig).transactionDB,
+        retryWrites: true,
+        writeConcern: {
+          w: 'majority',
+        },
+      }),
+    }),
     UserModule,
     AuthModule,
     CategoryModule,
+    TransactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

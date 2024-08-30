@@ -42,6 +42,10 @@ export class Environment implements IEnvironment {
   @IsNotEmpty()
   @Expose({ name: 'CATEGORY_DB' })
   categoryDB: string;
+
+  @IsNotEmpty()
+  @Expose({ name: 'TRANSACTION_DB' })
+  transactionDB: string;
 }
 
 export const envConfig = 'envConfig';

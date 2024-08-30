@@ -14,7 +14,7 @@ export class CategorySchema implements ICategory {
   icon: string;
 
   @Prop({ required: true })
-  userId: `${string}-${string}-${string}-${string}-${string}`;
+  userId: UUID;
 }
 
 export const CategorySchemaObject =
