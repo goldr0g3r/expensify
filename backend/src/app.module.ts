@@ -9,6 +9,8 @@ import { DB_CONNECTION } from './common/constant/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { ContactsModule } from './contacts/contacts.module';
+import { GroupsModule } from './groups/groups.module';
 
 @Module({
   imports: [
@@ -57,6 +59,8 @@ import { TransactionModule } from './transaction/transaction.module';
     AuthModule,
     CategoryModule,
     TransactionModule,
+    ContactsModule,
+    GroupsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
