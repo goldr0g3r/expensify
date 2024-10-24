@@ -1,6 +1,10 @@
-import { AxiosError } from "axios";
-import { LocalStorageKey } from "../common/entities/localStorage";
-import { SessionStorageKey } from "../common/entities/sessionStorage";
+import axios, { AxiosError } from "axios";
+import {
+  IDeviceIdStorage,
+  IRefreshTokenStorage,
+  LocalStorageKey,
+} from "../common/entities/localStorage";
+import { IAccessTokenStorage, SessionStorageKey } from "../common/entities/sessionStorage";
 import api from "../service/api";
 import LocalStorageService from "../service/local-storage";
 import SessionStorageService from "../service/session-storage";
@@ -11,6 +15,7 @@ import {
   ILoginSuccessResponse,
   IValidationErrorApiResponse,
 } from "./entities/login";
+import configurations from "../config";
 
 const sessionStorageService = new SessionStorageService();
 const localStorageService = new LocalStorageService();
@@ -45,7 +50,119 @@ export async function login(
   }
 }
 
+export async function refresh() {
+  try {
+    const refreshToken = localStorageService.get(
+      LocalStorageKey.REFRESH_TOKEN
+    ) as IRefreshTokenStorage;
+    if (!refreshToken)
+      return {
+        status: false,
+        message: "Something went wrong! Kindly login again.",
+      };
+    const deviceId = (
+      localStorageService.get(LocalStorageKey.DEVICE) as IDeviceIdStorage
+    )?.deviceId;
+
+    const response = await axios.post<ILoginAPIResponse>(
+      "/auth/refresh",
+      {},
+      {
+        baseURL: configurations.backendUrl,
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+          deviceId: deviceId,
+        },
+      }
+    );
+    if (!response)
+      return { status: false, message: "No Response from the server" };
+
+    if (!response.data.tokens)
+      return { status: false, message: "No Response from the server" };
+
+    sessionStorageService.set(SessionStorageKey.ACCESS_TOKEN, {
+      accessToken: response.data.tokens.accessToken,
+    });
+
+    if (response.data.data)
+      localStorageService.set(LocalStorageKey.USER, response.data.data);
+    return {
+      status: true,
+      data: response.data.data,
+      tokens: { accessToken: response.data.tokens.accessToken },
+    };
+  } catch (error: any | AxiosError) {
+    console.error(error);
+    if (
+      error?.response?.status === 401 ||
+      error?.response?.data?.detail === "Unauthorized" ||
+      error?.response?.data?.status === 401
+    ) {
+      await logout();
+
+      return { status: false, message: "LOGGED OUT" };
+    }
+    if (error instanceof AxiosError) {
+      return {
+        status: false,
+        message:
+          "Network Error Occurred. Check your internet connection and try again!",
+      };
+    }
+
+    return {
+      status: false,
+      message: "Error Occurred. Please Logout and Login",
+    };
+  }
+}
+
 export function isLoggedIn(): boolean {
+  try {
+    const refreshToken = localStorageService.get(LocalStorageKey.REFRESH_TOKEN);
+    if (!refreshToken) return false;
+    return true;
+  } catch (error) {
+    console.error("Error in Handling Tokens: ", error);
+    return false;
+  }
+}
+
+export async function logout(): Promise<boolean> {
+  try {
+    const accessToken = (
+      sessionStorageService.get(
+        SessionStorageKey.ACCESS_TOKEN
+      ) as IAccessTokenStorage
+    )?.accessToken;
+    const deviceId = (
+      localStorageService.get(LocalStorageKey.DEVICE) as IDeviceIdStorage
+    )?.deviceId;
+
+    await axios.post(
+      "/auth/logout",
+      {},
+      {
+        withCredentials: true,
+        baseURL: configurations.backendUrl,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          deviceid: deviceId,
+        },
+      }
+    );
+  } catch (error) {
+    console.error(error);
+  }
+
+  sessionStorageService.clear();
+  localStorageService.remove(LocalStorageKey.USER);
+  localStorageService.remove(LocalStorageKey.REFRESH_TOKEN);
+
+  window.location.reload();
+
   return true;
 }
 

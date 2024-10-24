@@ -9,6 +9,7 @@ import {
 import Header from "./container/header";
 import Sidebar from "./container/sidebar";
 import { useContext } from "react";
+import LoginPage from "./pages/login";
 
 function ProtectedRoutes({ children }: { children: any }) {
   const location = useLocation();
@@ -40,7 +41,7 @@ const browserRouter = createBrowserRouter([
       },
       {
         path: "account/login",
-        element: <div>login</div>,
+        element: <LoginPage />,
       },
       {
         path: "account",

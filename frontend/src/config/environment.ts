@@ -3,11 +3,11 @@ export interface IEnvironment {
 }
 
 const environment: IEnvironment = {
-  backendUrl: process.env.BACKEND_URL || "",
+  backendUrl: process.env.REACT_APP_BACKEND_URL || "",
 };
 
 if (!environment.backendUrl) {
-  throw new Error("BACKEND_URL is not set");
+  console.error("BACKEND_URL is not set");
 }
 
 export default environment;
