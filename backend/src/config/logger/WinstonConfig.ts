@@ -6,7 +6,7 @@ const loggerColors = {
   http: 'magenta',
   verbose: 'cyan',
   debug: 'blue',
-  silly: 'grey',
+  silly: 'rainbow',
 };
 const GetWinstonConfig = (): winston.LoggerOptions => {
   const options: winston.LoggerOptions = {};

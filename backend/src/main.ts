@@ -17,10 +17,9 @@ async function bootstrap() {
 
   // swagger
   const options = new DocumentBuilder()
-    .setTitle('NestJS API')
-    .setDescription('API description')
+    .setTitle('Expensify API')
+    .setDescription('An Expense Management API that matters')
     .setVersion('1.0')
-    .addTag('nestjs')
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
       'access-token',
@@ -34,7 +33,13 @@ async function bootstrap() {
   SwaggerModule.setup('api-docs', app, document);
 
   await app.listen(environment.port);
-  logger.http(`Application is running on: ${await app.getUrl()}`);
-  logger.verbose(`Swagger is running on: ${await app.getUrl()}/api-docs`);
+  logger.http(
+    `Application is running on: ${await app.getUrl()}`,
+    'Application',
+  );
+  logger.http(
+    `Swagger is running on: ${await app.getUrl()}/api-docs`,
+    'Swagger',
+  );
 }
 bootstrap();
