@@ -1,57 +1,37 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { randomUUID, UUID } from 'crypto';
-import { IUserSession, IUserSessionDevice } from 'src/common/interface';
+import { IUserSessionDevice } from 'src/common/interface';
+import { TIpAddress, TREFRESH_TOKEN } from 'src/common/types';
 
-@Schema()
-export class UserSessionDevice implements IUserSessionDevice {
-  @Prop({ required: true, unique: true, default: () => randomUUID() })
-  id: UUID;
-
+@Schema({ timestamps: true })
+export class UserSessionSchema implements IUserSessionDevice {
   @Prop({ default: () => randomUUID() })
-  deviceId?: UUID;
+  deviceId: UUID;
 
   @Prop()
-  name?: string;
+  name: string;
 
   @Prop()
-  type?: string;
+  type: string;
 
   @Prop()
-  os?: string;
+  os: string;
 
   @Prop()
-  osVersion?: string;
+  osVersion: string;
 
   @Prop()
-  browser?: string;
+  browser: string;
 
   @Prop()
-  browserVersion?: string;
+  browserVersion: string;
 
   @Prop()
-  ip?: string;
+  ip: TIpAddress;
 
   @Prop()
-  country?: string;
-
-  @Prop()
-  city?: string;
-
-  @Prop()
-  timezone?: string;
+  refreshToken?: TREFRESH_TOKEN;
 }
-
-@Schema()
-export class UserSessionSchema implements IUserSession {
-  @Prop({ required: true, default: () => randomUUID() })
-  id: UUID;
-
-  @Prop({ required: true, type: [UserSessionDevice] })
-  session: UserSessionDevice[];
-}
-
-export const UserSessionDeviceSchemaObject =
-  SchemaFactory.createForClass(UserSessionDevice);
 
 export const UserSessionSchemaObject =
   SchemaFactory.createForClass(UserSessionSchema);

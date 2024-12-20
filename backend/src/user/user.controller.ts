@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
-import { RegisterUserRequest } from './dto/request/registerRequest.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(
@@ -12,10 +13,5 @@ export class UserController {
   @Get('findall')
   findAll() {
     return this.userService.findAll();
-  }
-
-  @Post('register')
-  register(@Body() body: RegisterUserRequest) {
-    return this.userRepository.registerAccount(body);
   }
 }

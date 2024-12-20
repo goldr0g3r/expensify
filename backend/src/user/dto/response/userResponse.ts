@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { UUID } from 'crypto';
-import { IUser } from 'src/common/interface';
+import { IUserResponse } from 'src/common/interface';
 
-export class UserResponse implements IUser {
+export class UserResponse implements IUserResponse {
   @ApiProperty({
     title: 'ID',
     description: 'ID of the user',
@@ -19,6 +19,14 @@ export class UserResponse implements IUser {
   })
   @Expose()
   username: string;
+
+  @ApiProperty({
+    title: 'Email',
+    description: 'Email of the user',
+    example: 'johndoe@gmail.com',
+  })
+  @Expose()
+  email: string;
 
   @ApiProperty({
     title: 'Name',

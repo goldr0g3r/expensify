@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IUserRegisterRequest } from 'src/common/interface';
+import { ILoginRequest, ILoginWithEmailRequest } from 'src/common/interface';
 
-export class UserRegisterRequest implements IUserRegisterRequest {
+export class UserLoginRequest implements ILoginRequest {
   @ApiProperty({
     title: 'username',
     description: 'Username of the user',
@@ -10,18 +10,20 @@ export class UserRegisterRequest implements IUserRegisterRequest {
   username: string;
 
   @ApiProperty({
+    title: 'Password',
+    description: 'Password of the user',
+    example: 'password',
+  })
+  password: string;
+}
+
+export class UserLoginWithEmailRequest implements ILoginWithEmailRequest {
+  @ApiProperty({
     title: 'Email',
     description: 'Email of the user',
     example: 'johndoe@gmail.com',
   })
   email: string;
-
-  @ApiProperty({
-    title: 'Name',
-    description: 'Name of the user',
-    example: 'John Doe',
-  })
-  name: string;
 
   @ApiProperty({
     title: 'Password',
