@@ -10,6 +10,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Config } from './config/environment/env.constant';
 import { DatabaseConnection } from './common/constants';
 import { AuthModule } from './auth/auth.module';
+import { AuthGuard } from '@nestjs/passport';
+import { APP_GUARD } from '@nestjs/core';
+import { AccessTokenGuard } from './common/helpers/guards/accessToken.guard';
 
 @Module({
   imports: [
@@ -34,6 +37,12 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
+  ],
 })
 export class AppModule {}

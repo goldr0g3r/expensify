@@ -15,6 +15,7 @@ import { plainToClass } from 'class-transformer';
 import { IUserRegisterRequest, IUserSessionDevice } from 'src/common/interface';
 import { UUID } from 'crypto';
 import { TREFRESH_TOKEN } from 'src/common/types';
+import { DefaultRoles } from 'src/common/models/auth/enum/Role';
 
 @Injectable()
 export class UserRepository extends MongoRepository {
@@ -35,6 +36,9 @@ export class UserRepository extends MongoRepository {
           name: request.name,
           email: request.email,
           session: [],
+          roles: DefaultRoles,
+          isVerified: false,
+          verifyToken: undefined,
         },
         request.password,
       );
@@ -61,6 +65,21 @@ export class UserRepository extends MongoRepository {
     } catch (error) {
       this.logger.error(error);
       return null;
+    }
+  }
+
+  async verifyAccount(userId: UUID) {
+    try {
+      const user = await this.userModel.findOne({ id: userId });
+      if (!user) {
+        return new UnprocessableEntityException('User not found');
+      }
+      user.isVerified = true;
+      await user.save();
+      return true;
+    } catch (error) {
+      this.logger.error(error);
+      return new BadRequestException('Something went wrong');
     }
   }
 
@@ -126,9 +145,40 @@ export class UserRepository extends MongoRepository {
     try {
       const user = await this.userModel.findOne({ id: userId });
       if (!user) {
-        return new UnprocessableEntityException('User not found');
+        return false;
       }
       return this.toUserResponse(user);
+    } catch (error) {
+      this.logger.error(error);
+      return new BadRequestException('Something went wrong');
+    }
+  }
+
+  async fetchUserVverifiedStatus(userId: UUID) {
+    try {
+      const user = await this.userModel.findOne({ id: userId });
+      if (!user) {
+        return null;
+      }
+      return {
+        isVerified: user.isVerified,
+        verifyToken: user.verifyToken,
+      };
+    } catch (error) {
+      this.logger.error(error);
+      return null;
+    }
+  }
+
+  async updateUserVerificationStatus(userId: UUID, status: boolean) {
+    try {
+      const user = await this.userModel.findOne({ id: userId });
+      if (!user) {
+        return new UnprocessableEntityException('User not found');
+      }
+      user.isVerified = status;
+      await user.save();
+      return true;
     } catch (error) {
       this.logger.error(error);
       return new BadRequestException('Something went wrong');
@@ -142,6 +192,19 @@ export class UserRepository extends MongoRepository {
         return new UnprocessableEntityException('User not found');
       }
       return this.toUserResponse(user);
+    } catch (error) {
+      this.logger.error(error);
+      return new BadRequestException('Something went wrong');
+    }
+  }
+
+  async findUserRoles(userId: UUID) {
+    try {
+      const user = await this.userModel.findOne({ id: userId });
+      if (!user) {
+        return new UnprocessableEntityException('User not found');
+      }
+      return user.roles;
     } catch (error) {
       this.logger.error(error);
       return new BadRequestException('Something went wrong');

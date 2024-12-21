@@ -51,6 +51,10 @@ export class Environment implements IEnvironment {
   @IsNotEmpty()
   @Expose({ name: 'COOKIE_SECRET' })
   cookieSecret: string;
+
+  @IsNotEmpty()
+  @Expose({ name: 'VERIFY_EMAIL_SECRET' })
+  verifyEmailSecret: string;
 }
 
 export const registerConfig = registerAs(Config, (): Environment => {

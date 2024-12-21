@@ -5,10 +5,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from 'src/user/user.module';
 import { AccessTokenStrategy } from './strategies/accessToken.strategy';
 import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
+import { AccessTokenGuard } from 'src/common/helpers/guards/accessToken.guard';
 
 @Module({
   imports: [
     JwtModule.register({
+      global: true,
       verifyOptions: {
         ignoreExpiration: false,
         algorithms: ['HS256'],
@@ -16,7 +18,13 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
     }),
     UserModule,
   ],
-  providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
+  providers: [
+    AuthService,
+    AccessTokenStrategy,
+    RefreshTokenStrategy,
+    AccessTokenGuard,
+  ],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -6,11 +6,12 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { UUID } from 'crypto';
+import { randomUUID, UUID } from 'crypto';
 import * as DeviceDetector from 'device-detector-js';
 import {
   IPayloadAccessToken,
   IPayloadRefreshToken,
+  IPayloadVerifyEmail,
   IUserRegisterRequest,
 } from 'src/common/interface';
 import { TACCESS_TOKEN, TIpAddress, TREFRESH_TOKEN } from 'src/common/types';
@@ -158,6 +159,87 @@ export class AuthService {
     } catch (error) {
       this.logger.error(error);
       return false;
+    }
+  }
+
+  async verifyEmail(token: TACCESS_TOKEN) {
+    try {
+      const payload = this.jwtService.decode(token) as IPayloadVerifyEmail;
+      console.log(token);
+      const user = await this.userRepository.fetchUserVverifiedStatus(
+        payload.id,
+      );
+      if (!user || typeof user === 'string' || user === null) {
+        return new UnprocessableEntityException('User not found');
+      }
+      if (user.isVerified === true) {
+        return new UnprocessableEntityException('User already verified');
+      }
+
+      const status = await this.userRepository.updateUserVerificationStatus(
+        payload.id,
+        true,
+      );
+      if (!status) {
+        return new UnprocessableEntityException('Unable to verify user');
+      }
+
+      return true;
+    } catch (error) {
+      this.logger.error(error);
+      return false;
+    }
+  }
+
+  async sentVerificationEmail(userId: UUID, username: string) {
+    try {
+      const verifyToken =
+        await this.userRepository.fetchUserVverifiedStatus(userId);
+      console.log(verifyToken);
+      const token = await this.generateVerificationToken(
+        userId,
+        username,
+        verifyToken.verifyToken,
+      );
+      if (!token) {
+        return new BadRequestException('Unable to generate token');
+      }
+
+      if (!token.status) {
+        return new BadRequestException('Unable to update user');
+      }
+
+      return token.token;
+    } catch (error) {
+      this.logger.error(error);
+      return false;
+    }
+  }
+
+  async generateVerificationToken(
+    userId: UUID,
+    username: string,
+    verifyToken: UUID,
+  ) {
+    try {
+      const payload: IPayloadVerifyEmail = {
+        sub: userId,
+        iss: 'auth',
+        aud: 'user',
+        type: 'verify-email',
+        id: userId,
+        jti: verifyToken,
+        username: username,
+      };
+      const token = await this.jwtService.signAsync(payload, {
+        expiresIn: '1d',
+        secret: this.configService.get<Environment>(Config).verifyEmailSecret,
+      });
+
+      return { token: token, status: true };
+    } catch (error) {
+      this.logger.error(error);
+      return { status: false };
     }
   }
 
